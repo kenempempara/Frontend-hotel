@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏨 Hotel Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-hotel"></i>
+                <h1>Hotel Management System</h1>
+            </div>
+            <div class="api-status">
+                <span id="apiStatus">Checking API...</span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="dashboard" role="tab" aria-selected="true">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="tab-btn" data-tab="rooms" role="tab" aria-selected="false">
+                <i class="fas fa-bed"></i> Rooms
+            </button>
+            <button class="tab-btn" data-tab="guests" role="tab" aria-selected="false">
+                <i class="fas fa-users"></i> Guests
+            </button>
+            <button class="tab-btn" data-tab="bookings" role="tab" aria-selected="false">
+                <i class="fas fa-calendar-check"></i> Bookings
+            </button>
+            <button class="tab-btn" data-tab="newBooking" role="tab" aria-selected="false">
+                <i class="fas fa-plus-circle"></i> New Booking
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active" role="tabpanel" aria-labelledby="dashboard-tab">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon available">
+                            <i class="fas fa-bed" aria-hidden="true"></i>
+                        </div>
+                        <h3>Available Rooms</h3>
+                        <p class="stat-value" id="availableRooms">0</p>
+                        <span class="sr-only">Available rooms count</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon occupied">
+                            <i class="fas fa-user-check" aria-hidden="true"></i>
+                        </div>
+                        <h3>Occupied Rooms</h3>
+                        <p class="stat-value" id="occupiedRooms">0</p>
+                        <span class="sr-only">Occupied rooms count</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon guests">
+                            <i class="fas fa-users" aria-hidden="true"></i>
+                        </div>
+                        <h3>Total Guests</h3>
+                        <p class="stat-value" id="totalGuests">0</p>
+                        <span class="sr-only">Total guests count</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bookings">
+                            <i class="fas fa-calendar" aria-hidden="true"></i>
+                        </div>
+                        <h3>Active Bookings</h3>
+                        <p class="stat-value" id="activeBookings">0</p>
+                        <span class="sr-only">Active bookings count</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-sections">
+                    <div class="section">
+                        <h3><i class="fas fa-exclamation-circle"></i> Recent Alerts</h3>
+                        <div class="alerts-list" id="alertsList" role="alert">
+                            <!-- Alerts will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3><i class="fas fa-chart-line"></i> Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="switchTab('newBooking')" aria-label="Create new booking">
+                                <i class="fas fa-plus"></i> New Booking
+                            </button>
+                            <button class="action-btn" onclick="switchTab('rooms')" aria-label="Manage rooms">
+                                <i class="fas fa-bed"></i> Manage Rooms
+                            </button>
+                            <button class="action-btn" onclick="switchTab('guests')" aria-label="Add new guest">
+                                <i class="fas fa-user-plus"></i> Add Guest
+                            </button>
+                            <button class="action-btn" onclick="loadAllData()" aria-label="Refresh all data">
+                                <i class="fas fa-sync-alt"></i> Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rooms Tab -->
+            <section id="rooms" class="tab-content" role="tabpanel" aria-labelledby="rooms-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-bed"></i> Room Management</h2>
+                    <button class="btn-primary" onclick="showRoomForm()" aria-label="Add new room">
+                        <i class="fas fa-plus"></i> Add New Room
+                    </button>
+                </div>
+                
+                <!-- Room Form (Hidden by default) -->
+                <div id="roomForm" class="form-container hidden">
+                    <h3><i class="fas fa-edit"></i> <span id="roomFormTitle">Add New Room</span></h3>
+                    <form id="roomFormElement">
+                        <input type="hidden" id="roomId">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="roomNumber"><i class="fas fa-hashtag"></i> Room Number *</label>
+                                <input type="text" id="roomNumber" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="roomType"><i class="fas fa-star"></i> Room Type *</label>
+                                <select id="roomType" required aria-required="true" title="Select room type">
+                                    <option value="">Select Type</option>
+                                    <option value="single">Single</option>
+                                    <option value="double">Double</option>
+                                    <option value="suite">Suite</option>
+                                    <option value="deluxe">Deluxe</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="roomPrice"><i class="fas fa-tag"></i> Price per Night *</label>
+                                <input type="number" id="roomPrice" required min="0" step="0.01" aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="roomCapacity"><i class="fas fa-user-friends"></i> Capacity *</label>
+                                <input type="number" id="roomCapacity" required min="1" aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="roomStatus"><i class="fas fa-circle"></i> Status *</label>
+                                <select id="roomStatus" required aria-required="true" title="Select room status">
+                                    <option value="available">Available</option>
+                                    <option value="occupied">Occupied</option>
+                                    <option value="maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="roomAmenities"><i class="fas fa-concierge-bell"></i> Amenities</label>
+                                <div class="amenities-checkboxes" id="roomAmenities">
+                                    <label><input type="checkbox" value="TV"> TV</label>
+                                    <label><input type="checkbox" value="WiFi"> WiFi</label>
+                                    <label><input type="checkbox" value="AC"> Air Conditioning</label>
+                                    <label><input type="checkbox" value="Mini Bar"> Mini Bar</label>
+                                    <label><input type="checkbox" value="Jacuzzi"> Jacuzzi</label>
+                                    <label><input type="checkbox" value="Balcony"> Balcony</label>
+                                    <label><input type="checkbox" value="Kitchen"> Kitchen</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="hideRoomForm()">Cancel</button>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Save Room
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Room Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="roomFilterStatus">Filter by Status:</label>
+                        <select id="roomFilterStatus" onchange="filterRooms()" title="Filter rooms by status">
+                            <option value="">All Rooms</option>
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="roomFilterType">Filter by Type:</label>
+                        <select id="roomFilterType" onchange="filterRooms()" title="Filter rooms by type">
+                            <option value="">All Types</option>
+                            <option value="single">Single</option>
+                            <option value="double">Double</option>
+                            <option value="suite">Suite</option>
+                            <option value="deluxe">Deluxe</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Rooms Table -->
+                <div class="table-container">
+                    <div role="region" aria-labelledby="rooms-table-caption" tabindex="0">
+                        <table id="roomsTable">
+                            <caption id="rooms-table-caption" class="sr-only">List of hotel rooms with details and actions</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Room #</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Capacity</th>
+                                    <th scope="col">Amenities</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomsTableBody">
+                                <!-- Rooms will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guests Tab -->
+            <section id="guests" class="tab-content" role="tabpanel" aria-labelledby="guests-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-users"></i> Guest Management</h2>
+                    <button class="btn-primary" onclick="showGuestForm()" aria-label="Add new guest">
+                        <i class="fas fa-user-plus"></i> Add New Guest
+                    </button>
+                </div>
+                
+                <!-- Guest Form -->
+                <div id="guestForm" class="form-container hidden">
+                    <h3><i class="fas fa-edit"></i> <span id="guestFormTitle">Add New Guest</span></h3>
+                    <form id="guestFormElement">
+                        <input type="hidden" id="guestId">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="guestName"><i class="fas fa-user"></i> Full Name *</label>
+                                <input type="text" id="guestName" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="guestEmail"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" id="guestEmail" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="guestPhone"><i class="fas fa-phone"></i> Phone *</label>
+                                <input type="tel" id="guestPhone" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="guestIdProof"><i class="fas fa-id-card"></i> ID Proof *</label>
+                                <select id="guestIdProof" required aria-required="true" title="Select ID proof type">
+                                    <option value="">Select ID</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="driver-license">Driver's License</option>
+                                    <option value="id-card">National ID</option>
+                                    <option value="umid">UMID</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="guestIdNumber"><i class="fas fa-id-badge"></i> ID Number *</label>
+                                <input type="text" id="guestIdNumber" required aria-required="true">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="guestStreet"><i class="fas fa-map-marker-alt"></i> Street Address</label>
+                                <input type="text" id="guestStreet">
+                            </div>
+                            <div class="form-group">
+                                <label for="guestCity"><i class="fas fa-city"></i> City</label>
+                                <input type="text" id="guestCity">
+                            </div>
+                            <div class="form-group">
+                                <label for="guestCountry"><i class="fas fa-globe"></i> Country</label>
+                                <input type="text" id="guestCountry">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="hideGuestForm()">Cancel</button>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Save Guest
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Guests Table -->
+                <div class="table-container">
+                    <div role="region" aria-labelledby="guests-table-caption" tabindex="0">
+                        <table id="guestsTable">
+                            <caption id="guests-table-caption" class="sr-only">List of hotel guests with details and actions</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">ID Proof</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestsTableBody">
+                                <!-- Guests will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bookings Tab -->
+            <section id="bookings" class="tab-content" role="tabpanel" aria-labelledby="bookings-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-calendar-check"></i> Booking Management</h2>
+                </div>
+
+                <!-- Bookings Table -->
+                <div class="table-container">
+                    <div role="region" aria-labelledby="bookings-table-caption" tabindex="0">
+                        <table id="bookingsTable">
+                            <caption id="bookings-table-caption" class="sr-only">List of hotel bookings with details and actions</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Booking ID</th>
+                                    <th scope="col">Guest</th>
+                                    <th scope="col">Room</th>
+                                    <th scope="col">Check-In</th>
+                                    <th scope="col">Check-Out</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Booking Tab -->
+            <section id="newBooking" class="tab-content" role="tabpanel" aria-labelledby="newBooking-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-plus-circle"></i> Create New Booking</h2>
+                </div>
+                
+                <div class="form-container">
+                    <form id="bookingForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bookingGuest"><i class="fas fa-user"></i> Select Guest *</label>
+                                <select id="bookingGuest" required aria-required="true" title="Select guest for booking" onchange="loadGuestDetails()">
+                                    <option value="">Select Guest</option>
+                                    <!-- Guests will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bookingRoom"><i class="fas fa-bed"></i> Select Room *</label>
+                                <select id="bookingRoom" required aria-required="true" title="Select room for booking" onchange="loadRoomDetails()">
+                                    <option value="">Select Room</option>
+                                    <!-- Available rooms will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bookingCheckIn"><i class="fas fa-sign-in-alt"></i> Check-In Date *</label>
+                                <input type="date" id="bookingCheckIn" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="bookingCheckOut"><i class="fas fa-sign-out-alt"></i> Check-Out Date *</label>
+                                <input type="date" id="bookingCheckOut" required aria-required="true" onchange="calculateTotal()">
+                            </div>
+                            <div class="form-group">
+                                <label for="bookingGuests"><i class="fas fa-user-friends"></i> Number of Guests *</label>
+                                <input type="number" id="bookingGuests" required min="1" aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="bookingPaymentStatus"><i class="fas fa-credit-card"></i> Payment Status</label>
+                                <select id="bookingPaymentStatus" title="Select payment status">
+                                    <option value="pending">Pending</option>
+                                    <option value="paid">Paid</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="bookingSpecialRequests"><i class="fas fa-sticky-note"></i> Special Requests</label>
+                                <textarea id="bookingSpecialRequests" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Guest Details Preview -->
+                        <div class="details-preview hidden" id="guestDetails">
+                            <h4><i class="fas fa-info-circle"></i> Guest Information</h4>
+                            <div class="preview-grid">
+                                <div><strong>Name:</strong> <span id="previewGuestName">-</span></div>
+                                <div><strong>Email:</strong> <span id="previewGuestEmail">-</span></div>
+                                <div><strong>Phone:</strong> <span id="previewGuestPhone">-</span></div>
+                                <div><strong>ID:</strong> <span id="previewGuestId">-</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Room Details Preview -->
+                        <div class="details-preview hidden" id="roomDetails">
+                            <h4><i class="fas fa-info-circle"></i> Room Information</h4>
+                            <div class="preview-grid">
+                                <div><strong>Room #:</strong> <span id="previewRoomNumber">-</span></div>
+                                <div><strong>Type:</strong> <span id="previewRoomType">-</span></div>
+                                <div><strong>Price per night:</strong> ₱<span id="previewRoomPrice">-</span></div>
+                                <div><strong>Capacity:</strong> <span id="previewRoomCapacity">-</span></div>
+                                <div><strong>Amenities:</strong> <span id="previewRoomAmenities">-</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Booking Summary -->
+                        <div class="booking-summary">
+                            <h4><i class="fas fa-calculator"></i> Booking Summary</h4>
+                            <div class="summary-grid">
+                                <div>Nights: <span id="summaryNights">0</span></div>
+                                <div>Price per night: ₱<span id="summaryPrice">0</span></div>
+                                <div class="total">Total Amount: ₱<span id="summaryTotal">0</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="switchTab('dashboard')">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </button>
+                            <button type="submit" class="btn-success">
+                                <i class="fas fa-check-circle"></i> Create Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🏨 Hotel Management System v1.0 | Backend API: <span id="apiUrl">http://localhost:3000</span></p>
+            <div class="footer-links">
+                <button onclick="loadAllData()" class="refresh-btn" aria-label="Refresh all data">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button onclick="clearAllData()" class="danger-btn" aria-label="Clear local data">
+                    <i class="fas fa-trash"></i> Clear Local Data
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
