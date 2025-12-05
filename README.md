@@ -18,11 +18,12 @@ Prerequisites
 + Modern web browser
 
 ## 📁 File Structure
+
 hotel-frontend/
-├── index.html          # Main HTML file
-├── style.css          # All CSS styles
-├── script.js          # JavaScript logic
-└── README.md          # This file
+ + inex.html------ Main HTML file
+ + style.css------ All CSS styles
+ + script.js-------JavaScript logic
+
 
 ## 🎯 How to Use
 ### Adding a Room
@@ -83,8 +84,11 @@ The frontend connects to these backend endpoints:
 2. Check date validity
 3. Refresh page and try again
 
-
-
-
+# CODE SCREENSHOTS
+<img width="1280" height="597" alt="Screenshot 2025-12-05 185007" src="https://github.com/user-attachments/assets/de6da624-556e-471c-b55a-5f573e4eb5cc" />
+<img width="1290" height="581" alt="Screenshot 2025-12-05 184816" src="https://github.com/user-attachments/assets/0996e146-2291-4367-973a-95f9eb8db025" />
+<img width="1300" height="619" alt="Screenshot 2025-12-05 184710" src="https://github.com/user-attachments/assets/f8eac2d0-be6c-4c0f-bec9-9ad07a285c6b" />
+<img width="1285" height="592" alt="Screenshot 2025-12-05 185839" src="https://github.com/user-attachments/assets/0264cc5f-6794-4e6e-a1d6-664a45b3a777" />
+<img width="1287" height="607" alt="Screenshot 2025-12-05 185142" src="https://github.com/user-attachments/assets/2e3d382d-a5b3-4f31-86fd-b25ee6e0f771" />
 
 
